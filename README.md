@@ -1,5 +1,8 @@
 - [x] Randomly Generated Level
     - [x] Scroll Level
-- [ ] Player Object
+- [x] Player Object
 - [ ] Player Jump
 - [ ] Player Dash
+- [ ] Player Death
+- [ ] Scoreboard
+- [ ] Make sure level is always possible

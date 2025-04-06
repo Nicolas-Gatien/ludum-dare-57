@@ -9,7 +9,7 @@ clock: pygame.Clock = pygame.time.Clock()
 running: bool = True
 delta_time: float = 0
 
-SCROLL_SPEED = 200
+SCROLL_SPEED = 300
 
 def initialize_wall(wall: List[Tuple[float, float]], count: int):
     for _ in range(count):
@@ -26,14 +26,25 @@ def extend_wall(wall: List[Tuple[float, float]]):
         
 left_wall: List[Tuple[float, float]] = [(0, 0), (screen.width / 2 - 200, 0)]
 left_wall = initialize_wall(left_wall, 50)
-
 right_wall: List[Tuple[float, float]] = [(screen.width, 0), (screen.width / 2 + 200, 0)]
 right_wall = initialize_wall(right_wall, 50)
+
+player_position = pygame.Vector2(screen.width / 2, 100)
+player_speed = 0
+player_acceleration = 1000
 
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_a]:
+        player_speed -= player_acceleration * delta_time
+    if keys[pygame.K_d]:
+        player_speed += player_acceleration * delta_time
+
+    player_position.x += player_speed * delta_time
 
     left_wall = [(point[0], point[1] - SCROLL_SPEED * delta_time) for point in left_wall]
     right_wall = [(point[0], point[1] - SCROLL_SPEED * delta_time) for point in right_wall]
@@ -58,6 +69,7 @@ while running:
 
     pygame.draw.polygon(screen, "white", render_left_wall)
     pygame.draw.polygon(screen, "white", render_right_wall)
+    pygame.draw.circle(screen, "purple", player_position, 20)
 
     pygame.display.flip()
 
