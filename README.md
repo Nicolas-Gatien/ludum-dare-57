@@ -1,5 +1,5 @@
-- [ ] Randomly Generated Level
-    - [ ] Scroll Level
+- [x] Randomly Generated Level
+    - [x] Scroll Level
 - [ ] Player Object
 - [ ] Player Jump
 - [ ] Player Dash

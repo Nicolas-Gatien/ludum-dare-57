@@ -9,7 +9,7 @@ clock: pygame.Clock = pygame.time.Clock()
 running: bool = True
 delta_time: float = 0
 
-SCROLL_SPEED = 100
+SCROLL_SPEED = 200
 
 def initialize_wall(wall: List[Tuple[float, float]], count: int):
     for _ in range(count):
@@ -18,6 +18,11 @@ def initialize_wall(wall: List[Tuple[float, float]], count: int):
         wall.append(coordinate)
     
     return wall
+
+def extend_wall(wall: List[Tuple[float, float]]):
+    base = wall[len(wall) - 1]
+    coordinate = (base[0] + (random.uniform(-1, 1) * 20), base[1] + 20)
+    return coordinate
         
 left_wall: List[Tuple[float, float]] = [(0, 0), (screen.width / 2 - 200, 0)]
 left_wall = initialize_wall(left_wall, 50)
@@ -39,6 +44,15 @@ while running:
     render_right_wall = [point for point in right_wall]
     render_right_wall.append((screen.width, screen.height))
 
+    # Check 2 position so there's a buffer of 1 point before it's added to the bottom
+    if (left_wall[2][1] < 0):
+        left_wall.append(extend_wall(left_wall))
+        # Pop 1 because 0 is the corner piece that fills the rest of the screen
+        left_wall.pop(1)
+
+    if (right_wall[2][1] < 0):
+        right_wall.append(extend_wall(right_wall))
+        right_wall.pop(1)
 
     screen.fill("black")
 
