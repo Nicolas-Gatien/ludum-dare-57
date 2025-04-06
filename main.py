@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 from typing import List, Tuple
 
 pygame.init()
@@ -8,32 +9,41 @@ clock: pygame.Clock = pygame.time.Clock()
 running: bool = True
 delta_time: float = 0
 
-ADJUSTMENT_SPEED = 100
-polygon_coordinates: List[Tuple[int, int]] = [
-    (0, 0), 
-    (screen.width / 2 - 150, 0),
-    (screen.width / 2 - 200, screen.height / 2),
-    (screen.width / 2, screen.height),
-    (0, screen.height), 
-]
+SCROLL_SPEED = 100
 
-def adjust_polygon(points: List[Tuple[int, int]], delta: float):
-    new_points: List[Tuple[int, int]] = []
-    for point in points:
-        new_point = ([coord + ( delta * random.uniform(-1, 1) * ADJUSTMENT_SPEED ) for coord in point])
-        new_points.append(new_point)
+def initialize_wall(wall: List[Tuple[float, float]], count: int):
+    for _ in range(count):
+        base = wall[len(wall) - 1]
+        coordinate = (base[0] + (random.uniform(-1, 1) * 20), base[1] + 20)
+        wall.append(coordinate)
+    
+    return wall
+        
+left_wall: List[Tuple[float, float]] = [(0, 0), (screen.width / 2 - 200, 0)]
+left_wall = initialize_wall(left_wall, 50)
 
-    return new_points
+right_wall: List[Tuple[float, float]] = [(screen.width, 0), (screen.width / 2 + 200, 0)]
+right_wall = initialize_wall(right_wall, 50)
 
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-    screen.fill("purple")
+    left_wall = [(point[0], point[1] - SCROLL_SPEED * delta_time) for point in left_wall]
+    right_wall = [(point[0], point[1] - SCROLL_SPEED * delta_time) for point in right_wall]
 
-    polygon_coordinates = adjust_polygon(polygon_coordinates, delta_time)
-    pygame.draw.polygon(screen, "white", polygon_coordinates)
+    render_left_wall = [point for point in left_wall]
+    render_left_wall.append((0, screen.height))
+
+    render_right_wall = [point for point in right_wall]
+    render_right_wall.append((screen.width, screen.height))
+
+
+    screen.fill("black")
+
+    pygame.draw.polygon(screen, "white", render_left_wall)
+    pygame.draw.polygon(screen, "white", render_right_wall)
 
     pygame.display.flip()
 
