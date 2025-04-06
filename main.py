@@ -11,6 +11,9 @@ delta_time: float = 0
 
 SCROLL_SPEED = 300
 
+def distance(point_a: pygame.Vector2, point_b: pygame.Vector2):
+    return math.sqrt(((point_b.x - point_a.x) ** 2) + ((point_b.y - point_a.y) ** 2))
+
 def initialize_wall(wall: List[Tuple[float, float]], count: int):
     for _ in range(count):
         base = wall[len(wall) - 1]
@@ -33,10 +36,42 @@ player_position = pygame.Vector2(screen.width / 2, 100)
 player_speed = 0
 player_acceleration = 1000
 
+player_current_gravity = 0
+player_gravity_scale = 1000
+
+dead = False
+
+def die():
+    global SCROLL_SPEED
+    global player_current_gravity
+    global player_speed
+    global player_acceleration
+    
+    if dead:
+        return
+    player_current_gravity = SCROLL_SPEED
+    SCROLL_SPEED = 0
+    player_speed = -(player_speed * 0.75)
+    player_acceleration = 0
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+
+    if dead:
+        player_position.y += player_current_gravity * delta_time
+        player_current_gravity += player_gravity_scale * delta_time
+
+    for point in left_wall:
+        if distance(pygame.Vector2(point[0], point[1]), player_position) <= 20:
+            die()
+            dead = True
+
+    for point in right_wall:
+        if distance(pygame.Vector2(point[0], point[1]), player_position) <= 20:
+            die()
+            dead = True
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_a]:
