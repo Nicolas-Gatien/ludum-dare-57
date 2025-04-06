@@ -1,8 +1,11 @@
 - [x] Randomly Generated Level
     - [x] Scroll Level
 - [x] Player Object
-- [ ] Player Jump
-- [ ] Player Dash
 - [ ] Player Death
 - [ ] Scoreboard
+
+- [ ] Player Sprite 
+- [ ] Player Dash
 - [ ] Make sure level is always possible
+- [ ] Add Sine wave cave offset
+- [ ] Add Basic Enemy
