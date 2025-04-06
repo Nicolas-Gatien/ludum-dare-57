@@ -4,6 +4,10 @@ import math
 from typing import List, Tuple
 
 pygame.init()
+pygame.display.set_caption("Caver")
+pygame.font.init()
+my_font = pygame.font.SysFont('Comic Sans MS', 30)
+
 screen: pygame.Surface = pygame.display.set_mode((1280, 720))
 clock: pygame.Clock = pygame.time.Clock()
 running: bool = True
@@ -38,6 +42,7 @@ player_acceleration = 1000
 
 player_current_gravity = 0
 player_gravity_scale = 1000
+score = 0
 
 dead = False
 
@@ -100,11 +105,17 @@ while running:
         right_wall.append(extend_wall(right_wall))
         right_wall.pop(1)
 
+    if not(dead):
+        score += 20 * delta_time
+
     screen.fill("black")
 
     pygame.draw.polygon(screen, "white", render_left_wall)
     pygame.draw.polygon(screen, "white", render_right_wall)
     pygame.draw.circle(screen, "purple", player_position, 20)
+
+    text_surface = my_font.render(str(round(score)), False, "white")
+    screen.blit(text_surface, ((screen.width / 2) - text_surface.width / 2,0))
 
     pygame.display.flip()
 

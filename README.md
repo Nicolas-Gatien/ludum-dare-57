@@ -1,10 +1,11 @@
 - [x] Randomly Generated Level
     - [x] Scroll Level
 - [x] Player Object
-- [ ] Player Death
-- [ ] Scoreboard
+- [x] Player Death
+- [x] Scoreboard
 
-- [ ] Player Sprite 
+- [ ] Game Restart
+- [ ] Player Sprite
 - [ ] Player Dash
 - [ ] Make sure level is always possible
 - [ ] Add Sine wave cave offset
