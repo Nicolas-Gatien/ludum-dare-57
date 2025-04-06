@@ -5,6 +5,7 @@
 - [x] Scoreboard
 
 - [ ] Game Restart
+    - [ ] Game State
 - [ ] Player Sprite
 - [ ] Player Dash
 - [ ] Make sure level is always possible
