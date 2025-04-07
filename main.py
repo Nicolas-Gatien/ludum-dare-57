@@ -73,8 +73,8 @@ miner = pygame.transform.scale(miner, (48, 48))
 frog_sprite = pygame.image.load('frog.png').convert_alpha()
 frog_sprite = pygame.transform.scale(frog_sprite, (48, 48))
 
-jump_sound = pygame.mixer.Sound('jump.wav')
-death_sound = pygame.mixer.Sound('die.wav')
+jump_sound = pygame.mixer.Sound('jump.ogg')
+death_sound = pygame.mixer.Sound('die.ogg')
 
 def distance(point_a: pygame.Vector2, point_b: pygame.Vector2):
     return math.sqrt(((point_b.x - point_a.x) ** 2) + ((point_b.y - point_a.y) ** 2))
@@ -171,8 +171,6 @@ while running:
                     die()
                     game.dead = True
 
-    
-
     keys = pygame.key.get_pressed()
     if keys[pygame.K_a]:
         game.player_speed -= game.player_acceleration * delta_time
@@ -246,7 +244,6 @@ while running:
     pygame.draw.polygon(screen, "white", render_right_wall)
     player = pygame.draw.circle(screen, "purple", game.player_position, 20)
     screen.blit(blitted_miner, (game.player_position.x - (blitted_miner.width / 2), game.player_position.y - (blitted_miner.height / 2)))
-
     if game.dead:
         score_surface = my_font.render(f"You Fell {round(game.score)} meters!", False, "white")
         restart_surface = my_font.render("Press 'R' to Restart", False, "white")
