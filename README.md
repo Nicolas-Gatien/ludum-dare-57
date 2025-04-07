@@ -14,10 +14,10 @@
 - [x] Add Sound effects
     - [x] Jump Sound Effects
     - [x] Death Sound Effects
-- [ ] Add Music
-- [ ] Add Restart popup
+- [x] Add Restart popup
 - [ ] Fix Jumping Bug
 - [ ] Add Difficulty Scaling
 - [ ] Add Jump Sprite to Frogs
 - [ ] Add Pixelated Effect to Cave Wall
+- [ ] Add Music
 

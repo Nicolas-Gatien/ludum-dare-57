@@ -243,6 +243,18 @@ while running:
     player = pygame.draw.circle(screen, "purple", game.player_position, 20)
     screen.blit(blitted_miner, (game.player_position.x - (blitted_miner.width / 2), game.player_position.y - (blitted_miner.height / 2)))
 
+    if game.dead:
+        score_surface = my_font.render(f"You Fell {round(game.score)} meters!", False, "white")
+        restart_surface = my_font.render("Press 'R' to Restart", False, "white")
+        buffer = 20
+        background_rect = pygame.Rect(screen.width / 2 - restart_surface.width / 2 - buffer / 2, screen.height / 2 - restart_surface.height / 2 - buffer / 2, restart_surface.width + buffer, restart_surface.height + restart_surface.height + buffer)
+
+        pygame.draw.rect(screen, "black", background_rect, round(background_rect.height / 2), 16)
+        screen.blit(score_surface, ((screen.width / 2) - score_surface.width / 2, (screen.height / 2) - score_surface.height / 2))
+        screen.blit(restart_surface, ((screen.width / 2) - restart_surface.width / 2, (screen.height / 2) + restart_surface.height / 2))
+
+
+
     for frog in game.frogs:
         if frog.movement_speed < 0:
             blitted_frog = pygame.transform.rotate(frog_sprite, -frog.movement_speed * frog.current_gravity / 1000)
