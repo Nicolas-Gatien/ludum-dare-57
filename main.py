@@ -7,15 +7,21 @@ pygame.init()
 pygame.display.set_caption("Caver")
 pygame.font.init()
 
-class Frog():
-    def __init__(self, position: Tuple[float, float], rotation: float) -> None:
-        self.position: pygame.Vector2 = pygame.Vector2(position[0], position[1])
-        self.rotation = rotation
+LEFT = 0
+RIGHT = 1
 
+class Frog():
+    def __init__(self, position: Tuple[float, float]) -> None:
+        self.position: pygame.Vector2 = pygame.Vector2(position[0], position[1])
+        self.current_gravity = -350
+        self.gravity_scale = 400
+        self.movement_speed = 50
+        self.jumped = False
+        self.flipped = False
 
 class GameState():
     def __init__(self, screen: pygame.Surface) -> None:
-        self.player_position = pygame.Vector2(screen.width / 2, 100)
+        self.player_position = pygame.Vector2(screen.width / 2, 250)
         self.player_speed = 0
         self.player_acceleration = 1000
         self.player_current_gravity = 0
@@ -38,19 +44,19 @@ class GameState():
 
     @property
     def left_wall(self):
-        return self.walls[0]
+        return self.walls[LEFT]
     
     @left_wall.setter
     def left_wall(self, value):
-        self.walls[0] = value
+        self.walls[LEFT] = value
     
     @property
     def right_wall(self):
-        return self.walls[1]
+        return self.walls[RIGHT]
     
     @right_wall.setter
     def right_wall(self, value):
-        self.walls[1] = value
+        self.walls[RIGHT] = value
 
 my_font = pygame.font.SysFont('Comic Sans MS', 30)
 
@@ -78,15 +84,23 @@ def extend_wall(wall: List[Tuple[float, float]]):
     coordinate = (base[0] + (random.uniform(-1, 1) * 20) + offset, base[1] + 20)
     return coordinate
 
-def spawn_frog(wall: List[Tuple[float, float]], index: int):
+def spawn_frog(wall: List[Tuple[float, float]], index: int, wall_number: int):
     base = wall[index]
     previous = wall[index - 1]
 
+    if (wall_number == LEFT):
+        if (previous[0] > base[0]):
+            return None
+    elif (wall_number == RIGHT):
+        if (base[0] > previous[0]):
+            return None
+    
+    if tuple_distance(base, previous) < 30:
+        return None
+    
     coordinates = ((previous[0] + base[0]) / 2, (previous[1] + base[1]) / 2)
 
     return Frog(coordinates)
-
-
 
 game = GameState(screen=screen)
 
@@ -142,6 +156,16 @@ while running:
             if distance(pygame.Vector2(point[0], point[1]), game.player_position) <= 20:
                 die()
                 game.dead = True
+            for frog in game.frogs:
+                if distance(frog.position, pygame.Vector2(point[0], point[1])) <= 20:
+                    frog.jumped = False
+                    frog.current_gravity = -350
+                    frog.flipped = False
+                if distance(frog.position, game.player_position) <= 30:
+                    die()
+                    game.dead = True
+
+    
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_a]:
@@ -160,14 +184,29 @@ while running:
 
         if wall[2][1] < 0:
             coordinate = extend_wall(wall)
-            if (random.random() > 0.5):
-                game.frogs.append(spawn_frog(wall, len(wall) - 1))
+            if (random.random() > 0.95):
+                new_frog = spawn_frog(wall, len(wall) - 1, i)
+                if new_frog:
+                    game.frogs.append(new_frog)
             game.walls[i].append(coordinate)
             game.walls[i].pop(1)
     
     for i, frog in enumerate(game.frogs):
         game.frogs[i].position = pygame.Vector2(frog.position.x, frog.position.y - game.SCROLL_SPEED * delta_time)
-    
+        
+        if (distance(frog.position, game.player_position) < 375):
+            if (frog.jumped == False):
+                game.frogs[i].movement_speed = distance(frog.position, game.player_position) * ((game.player_position.x - frog.position.x) / abs(game.player_position.x - frog.position.x)) / 2.5
+                if (game.player_position.x > frog.position.x):
+                    game.frogs[i].flipped = True
+
+            game.frogs[i].jumped = True
+        
+        if (frog.jumped):
+            game.frogs[i].position.y += frog.current_gravity * delta_time
+            game.frogs[i].current_gravity += frog.gravity_scale * delta_time
+            game.frogs[i].position.x += frog.movement_speed * delta_time
+
     game.player_speed *= 0.95 - (1 * delta_time)
 
     render_left_wall = [point for point in game.left_wall]
@@ -185,11 +224,24 @@ while running:
     pygame.draw.polygon(screen, "white", render_right_wall)
     player = pygame.draw.circle(screen, "purple", game.player_position, 20)
     screen.blit(blitted_miner, (game.player_position.x - (blitted_miner.width / 2), game.player_position.y - (blitted_miner.height / 2)))
-    
 
     for frog in game.frogs:
-        screen.blit(frog_sprite, (frog.position.x - frog_sprite.width / 2, frog.position.y - frog_sprite.height / 2))
-        pygame.draw.circle(screen, "purple", frog.position, 2)
+        if frog.movement_speed < 0:
+            blitted_frog = pygame.transform.rotate(frog_sprite, -frog.movement_speed * frog.current_gravity / 1000)
+        else:
+            blitted_frog = pygame.transform.rotate(frog_sprite, frog.movement_speed * frog.current_gravity / 1000)
+        
+        if frog.jumped == False:
+            blitted_frog = frog_sprite
+
+        if ((game.player_position.x > frog.position.x and frog.jumped == False) or frog.flipped == True):
+            blitted_frog = pygame.transform.flip(blitted_frog, True, False)
+        
+        if (distance(frog.position, game.player_position) < 425 and frog.jumped == False):
+            blitted_frog = pygame.transform.scale(blitted_frog, (blitted_frog.width * 1.2, blitted_frog.height * 0.8))
+
+
+        screen.blit(blitted_frog, (frog.position.x - blitted_frog.width / 2, (frog.position.y - 10) - blitted_frog.height / 2))
     offset = (math.sin(game.score / 10) * 50) + (math.sin(game.score / 2) * 20) + (math.sin(game.score / 8) * 1.75)
 
     text_surface = my_font.render(f"{str(round(game.score))}m", False, "white")
