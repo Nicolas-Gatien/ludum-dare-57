@@ -10,10 +10,14 @@
     - [ ] Spritesheet
 - [x] Make sure level is always possible
 - [x] Add Sine wave cave offset
-- [ ] Add Basic Enemy
+- [x] Add Basic Enemy
 - [ ] Add Sound effects
+    - [x] Jump Sound Effects
+    - [ ] Death Sound Effects
 - [ ] Add Music
-- [ ] Add restart popup
+- [ ] Add Restart popup
+- [ ] Fix Jumping Bug
 - [ ] Add Difficulty Scaling
+- [ ] Add Jump Sprite to Frogs
 - [ ] Add Pixelated Effect to Cave Wall
 

@@ -6,6 +6,7 @@ from typing import List, Tuple
 pygame.init()
 pygame.display.set_caption("Caver")
 pygame.font.init()
+pygame.mixer.init()
 
 LEFT = 0
 RIGHT = 1
@@ -18,6 +19,7 @@ class Frog():
         self.movement_speed = 50
         self.jumped = False
         self.flipped = False
+        self.jump_time = 0
 
 class GameState():
     def __init__(self, screen: pygame.Surface) -> None:
@@ -70,6 +72,8 @@ miner = pygame.transform.scale(miner, (48, 48))
 
 frog_sprite = pygame.image.load('frog.png').convert_alpha()
 frog_sprite = pygame.transform.scale(frog_sprite, (48, 48))
+
+jump_sound = pygame.mixer.Sound('jump.wav')
 
 def distance(point_a: pygame.Vector2, point_b: pygame.Vector2):
     return math.sqrt(((point_b.x - point_a.x) ** 2) + ((point_b.y - point_a.y) ** 2))
@@ -195,11 +199,19 @@ while running:
         if (frog.position.y < -100):
             game.frogs.pop(i)
             continue
+            
+        if (game.frogs[i].jump_time > 0):
+            game.frogs[i].jump_time -= delta_time
+            print(game.frogs[i].jump_time)
 
         game.frogs[i].position = pygame.Vector2(frog.position.x, frog.position.y - game.SCROLL_SPEED * delta_time)
         
         if (distance(frog.position, game.player_position) < 375):
-            if (frog.jumped == False):
+            if (game.frogs[i].jump_time <= 0 and game.frogs[i].jumped == False):
+                game.frogs[i].jumped = True
+                game.frogs[i].jump_time = 0.1
+
+                jump_sound.play()
                 game.frogs[i].movement_speed = distance(frog.position, game.player_position) * ((game.player_position.x - frog.position.x) / abs(game.player_position.x - frog.position.x)) / 2.5
                 if (game.player_position.x > frog.position.x):
                     game.frogs[i].flipped = True
