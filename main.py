@@ -58,8 +58,10 @@ def distance(point_a: pygame.Vector2, point_b: pygame.Vector2):
     return math.sqrt(((point_b.x - point_a.x) ** 2) + ((point_b.y - point_a.y) ** 2))
 
 def extend_wall(wall: List[Tuple[float, float]]):
+    offset = (math.sin(game.score / 10) * 25) + (math.sin(game.score / 2) * 10) + (math.sin(game.score / 8) * 0.75)
     base = wall[len(wall) - 1]
-    coordinate = (base[0] + (random.uniform(-1, 1) * 20), base[1] + 20)
+    coordinate = (base[0] + (random.uniform(-1, 1) * 20) + offset, base[1] + 20)
+    print(offset)
     return coordinate
 
 game = GameState(screen=screen)
@@ -86,9 +88,10 @@ while running:
     else:
         blitted_miner = pygame.transform.rotate(miner, game.player_speed / 10)
 
+
     while distance(
         pygame.Vector2(game.left_wall[len(game.left_wall) - 1][0], game.left_wall[len(game.left_wall) - 1][1]), 
-        pygame.Vector2(game.right_wall[len(game.right_wall) - 1][0], game.right_wall[len(game.right_wall) - 1][1])) < 100:
+        pygame.Vector2(game.right_wall[len(game.right_wall) - 1][0], game.right_wall[len(game.right_wall) - 1][1])) < 200:
         game.left_wall[len(game.left_wall) - 1] = (game.left_wall[len(game.left_wall) - 1][0] - 1, game.left_wall[len(game.left_wall) - 1][1])
         game.right_wall[len(game.right_wall) - 1] = (game.right_wall[len(game.right_wall) - 1][0] + 1, game.right_wall[len(game.right_wall) - 1][1])
 
@@ -97,7 +100,14 @@ while running:
         pygame.Vector2(game.right_wall[len(game.right_wall) - 1][0], game.right_wall[len(game.right_wall) - 1][1])) > 500:
         game.left_wall[len(game.left_wall) - 1] = (game.left_wall[len(game.left_wall) - 1][0] + 1, game.left_wall[len(game.left_wall) - 1][1])
         game.right_wall[len(game.right_wall) - 1] = (game.right_wall[len(game.right_wall) - 1][0] - 1, game.right_wall[len(game.right_wall) - 1][1])
+    
+    while game.left_wall[len(game.left_wall) - 1][0] < 200:
+        game.left_wall[len(game.left_wall) - 1] = (game.left_wall[len(game.left_wall) - 1][0] + 23, game.left_wall[len(game.left_wall) - 1][1])
+        game.right_wall[len(game.right_wall) - 1] = (game.right_wall[len(game.right_wall) - 1][0] + 23, game.right_wall[len(game.right_wall) - 1][1])
 
+    while game.right_wall[len(game.right_wall) - 1][0] > screen.width - 200:
+        game.left_wall[len(game.left_wall) - 1] = (game.left_wall[len(game.left_wall) - 1][0] - 23, game.left_wall[len(game.left_wall) - 1][1])
+        game.right_wall[len(game.right_wall) - 1] = (game.right_wall[len(game.right_wall) - 1][0] - 23, game.right_wall[len(game.right_wall) - 1][1])
 
     if game.dead:
         game.player_position.y += game.player_current_gravity * delta_time
@@ -143,6 +153,7 @@ while running:
     pygame.draw.polygon(screen, "white", render_right_wall)
     player = pygame.draw.circle(screen, "purple", game.player_position, 20)
     screen.blit(blitted_miner, (game.player_position.x - (blitted_miner.width / 2), game.player_position.y - (blitted_miner.height / 2)))
+    offset = (math.sin(game.score / 10) * 50) + (math.sin(game.score / 2) * 20) + (math.sin(game.score / 8) * 1.75)
 
     text_surface = my_font.render(str(round(game.score)), False, "white")
     screen.blit(text_surface, ((screen.width / 2) - text_surface.width / 2,0))

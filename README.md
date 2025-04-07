@@ -9,9 +9,11 @@
 - [x] Player Sprite
     - [ ] Spritesheet
 - [x] Make sure level is always possible
-- [ ] Add Sine wave cave offset
+- [x] Add Sine wave cave offset
 - [ ] Add Basic Enemy
 - [ ] Add Sound effects
 - [ ] Add Music
 - [ ] Add restart popup
+- [ ] Add Difficulty Scaling
 - [ ] Add Pixelated Effect to Cave Wall
+
