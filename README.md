@@ -4,9 +4,10 @@
 - [x] Player Death
 - [x] Scoreboard
 
-- [ ] Game Restart
-    - [ ] Game State
+- [x] Game Restart
+    - [x] Game State
 - [ ] Player Sprite
+    - [ ] Spritesheet
 - [ ] Player Dash
 - [ ] Make sure level is always possible
 - [ ] Add Sine wave cave offset

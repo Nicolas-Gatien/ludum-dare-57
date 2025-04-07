@@ -44,18 +44,15 @@ class GameState():
     def right_wall(self, value):
         self.walls[1] = value
 
-# GAME STATE:
-# Player Position
-# Score
-# Wall Positions
-# Dead
-
 my_font = pygame.font.SysFont('Comic Sans MS', 30)
 
 screen: pygame.Surface = pygame.display.set_mode((1280, 720))
 clock: pygame.Clock = pygame.time.Clock()
 running: bool = True
 delta_time: float = 0
+
+miner = pygame.image.load('miner.png').convert_alpha()
+miner = pygame.transform.scale(miner, (48, 48))
 
 def distance(point_a: pygame.Vector2, point_b: pygame.Vector2):
     return math.sqrt(((point_b.x - point_a.x) ** 2) + ((point_b.y - point_a.y) ** 2))
@@ -82,6 +79,13 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+    if game.player_speed < 0:
+        blitted_miner = pygame.transform.rotate(miner, -game.player_speed / 10)
+        blitted_miner = pygame.transform.flip(blitted_miner, True, False)
+    else:
+        blitted_miner = pygame.transform.rotate(miner, game.player_speed / 10)
+
+
     if game.dead:
         game.player_position.y += game.player_current_gravity * delta_time
         game.player_current_gravity += game.player_gravity_scale * delta_time
@@ -100,7 +104,6 @@ while running:
     if keys[pygame.K_r] and game.dead:
         game = GameState(screen)
 
-
     game.player_position.x += game.player_speed * delta_time
 
     for i, wall in enumerate(game.walls):
@@ -109,6 +112,8 @@ while running:
         if wall[2][1] < 0:
             game.walls[i].append(extend_wall(wall))
             game.walls[i].pop(1)
+    
+    game.player_speed *= 0.95 - (1 * delta_time)
 
     render_left_wall = [point for point in game.left_wall]
     render_left_wall.append((0, screen.height))
@@ -123,7 +128,8 @@ while running:
 
     pygame.draw.polygon(screen, "white", render_left_wall)
     pygame.draw.polygon(screen, "white", render_right_wall)
-    pygame.draw.circle(screen, "purple", game.player_position, 20)
+    player = pygame.draw.circle(screen, "purple", game.player_position, 20)
+    screen.blit(blitted_miner, (game.player_position.x - (blitted_miner.width / 2), game.player_position.y - (blitted_miner.height / 2)))
 
     text_surface = my_font.render(str(round(game.score)), False, "white")
     screen.blit(text_surface, ((screen.width / 2) - text_surface.width / 2,0))
