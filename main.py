@@ -7,6 +7,12 @@ pygame.init()
 pygame.display.set_caption("Caver")
 pygame.font.init()
 
+class Frog():
+    def __init__(self, position: Tuple[float, float], rotation: float) -> None:
+        self.position: pygame.Vector2 = pygame.Vector2(position[0], position[1])
+        self.rotation = rotation
+
+
 class GameState():
     def __init__(self, screen: pygame.Surface) -> None:
         self.player_position = pygame.Vector2(screen.width / 2, 100)
@@ -15,6 +21,8 @@ class GameState():
         self.player_current_gravity = 0
         self.player_gravity_scale = 1000
         self.dead = False
+
+        self.frogs: List[Frog] = []
 
         self.walls = [[(0, 0), (screen.width / 2 - 200, 0)], [(screen.width, 0), (screen.width / 2 + 200, 0)]]
         INITIAL_WALL_LENGTH = 50
@@ -54,15 +62,31 @@ delta_time: float = 0
 miner = pygame.image.load('miner.png').convert_alpha()
 miner = pygame.transform.scale(miner, (48, 48))
 
+frog_sprite = pygame.image.load('frog.png').convert_alpha()
+frog_sprite = pygame.transform.scale(frog_sprite, (48, 48))
+
 def distance(point_a: pygame.Vector2, point_b: pygame.Vector2):
     return math.sqrt(((point_b.x - point_a.x) ** 2) + ((point_b.y - point_a.y) ** 2))
+
+def tuple_distance(point_a: Tuple[float, float], point_b: Tuple[float, float]):
+    return math.sqrt(((point_b[0] - point_a[0]) ** 2) + ((point_b[1] - point_a[1]) ** 2))
+
 
 def extend_wall(wall: List[Tuple[float, float]]):
     offset = (math.sin(game.score / 10) * 25) + (math.sin(game.score / 2) * 10) + (math.sin(game.score / 8) * 0.75)
     base = wall[len(wall) - 1]
     coordinate = (base[0] + (random.uniform(-1, 1) * 20) + offset, base[1] + 20)
-    print(offset)
     return coordinate
+
+def spawn_frog(wall: List[Tuple[float, float]], index: int):
+    base = wall[index]
+    previous = wall[index - 1]
+
+    coordinates = ((previous[0] + base[0]) / 2, (previous[1] + base[1]) / 2)
+
+    return Frog(coordinates)
+
+
 
 game = GameState(screen=screen)
 
@@ -88,7 +112,7 @@ while running:
     else:
         blitted_miner = pygame.transform.rotate(miner, game.player_speed / 10)
 
-
+    # LEVEL GENERATION
     while distance(
         pygame.Vector2(game.left_wall[len(game.left_wall) - 1][0], game.left_wall[len(game.left_wall) - 1][1]), 
         pygame.Vector2(game.right_wall[len(game.right_wall) - 1][0], game.right_wall[len(game.right_wall) - 1][1])) < 200:
@@ -127,14 +151,22 @@ while running:
     if keys[pygame.K_r] and game.dead:
         game = GameState(screen)
 
+    # PLAYER MOVEMENT
     game.player_position.x += game.player_speed * delta_time
 
+    # SCROLLING
     for i, wall in enumerate(game.walls):
         game.walls[i] = [(point[0], point[1] - game.SCROLL_SPEED * delta_time) for point in wall]
 
         if wall[2][1] < 0:
-            game.walls[i].append(extend_wall(wall))
+            coordinate = extend_wall(wall)
+            if (random.random() > 0.5):
+                game.frogs.append(spawn_frog(wall, len(wall) - 1))
+            game.walls[i].append(coordinate)
             game.walls[i].pop(1)
+    
+    for i, frog in enumerate(game.frogs):
+        game.frogs[i].position = pygame.Vector2(frog.position.x, frog.position.y - game.SCROLL_SPEED * delta_time)
     
     game.player_speed *= 0.95 - (1 * delta_time)
 
@@ -153,9 +185,14 @@ while running:
     pygame.draw.polygon(screen, "white", render_right_wall)
     player = pygame.draw.circle(screen, "purple", game.player_position, 20)
     screen.blit(blitted_miner, (game.player_position.x - (blitted_miner.width / 2), game.player_position.y - (blitted_miner.height / 2)))
+    
+
+    for frog in game.frogs:
+        screen.blit(frog_sprite, (frog.position.x - frog_sprite.width / 2, frog.position.y - frog_sprite.height / 2))
+        pygame.draw.circle(screen, "purple", frog.position, 2)
     offset = (math.sin(game.score / 10) * 50) + (math.sin(game.score / 2) * 20) + (math.sin(game.score / 8) * 1.75)
 
-    text_surface = my_font.render(str(round(game.score)), False, "white")
+    text_surface = my_font.render(f"{str(round(game.score))}m", False, "white")
     screen.blit(text_surface, ((screen.width / 2) - text_surface.width / 2,0))
 
     pygame.display.flip()
