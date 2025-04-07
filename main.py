@@ -71,7 +71,8 @@ def die():
         return
     game.player_current_gravity = game.SCROLL_SPEED
     game.SCROLL_SPEED = 0
-    game.player_speed = -(game.player_speed * 0.75)
+    game.player_speed = -(game.player_speed * 2)
+    game.player_current_gravity = -100
     game.player_acceleration = 0
 
 while running:
@@ -84,6 +85,18 @@ while running:
         blitted_miner = pygame.transform.flip(blitted_miner, True, False)
     else:
         blitted_miner = pygame.transform.rotate(miner, game.player_speed / 10)
+
+    while distance(
+        pygame.Vector2(game.left_wall[len(game.left_wall) - 1][0], game.left_wall[len(game.left_wall) - 1][1]), 
+        pygame.Vector2(game.right_wall[len(game.right_wall) - 1][0], game.right_wall[len(game.right_wall) - 1][1])) < 100:
+        game.left_wall[len(game.left_wall) - 1] = (game.left_wall[len(game.left_wall) - 1][0] - 1, game.left_wall[len(game.left_wall) - 1][1])
+        game.right_wall[len(game.right_wall) - 1] = (game.right_wall[len(game.right_wall) - 1][0] + 1, game.right_wall[len(game.right_wall) - 1][1])
+
+    while distance(
+        pygame.Vector2(game.left_wall[len(game.left_wall) - 1][0], game.left_wall[len(game.left_wall) - 1][1]), 
+        pygame.Vector2(game.right_wall[len(game.right_wall) - 1][0], game.right_wall[len(game.right_wall) - 1][1])) > 500:
+        game.left_wall[len(game.left_wall) - 1] = (game.left_wall[len(game.left_wall) - 1][0] + 1, game.left_wall[len(game.left_wall) - 1][1])
+        game.right_wall[len(game.right_wall) - 1] = (game.right_wall[len(game.right_wall) - 1][0] - 1, game.right_wall[len(game.right_wall) - 1][1])
 
 
     if game.dead:

@@ -6,9 +6,12 @@
 
 - [x] Game Restart
     - [x] Game State
-- [ ] Player Sprite
+- [x] Player Sprite
     - [ ] Spritesheet
-- [ ] Player Dash
-- [ ] Make sure level is always possible
+- [x] Make sure level is always possible
 - [ ] Add Sine wave cave offset
 - [ ] Add Basic Enemy
+- [ ] Add Sound effects
+- [ ] Add Music
+- [ ] Add restart popup
+- [ ] Add Pixelated Effect to Cave Wall
