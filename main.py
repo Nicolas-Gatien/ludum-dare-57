@@ -190,8 +190,12 @@ while running:
                     game.frogs.append(new_frog)
             game.walls[i].append(coordinate)
             game.walls[i].pop(1)
-    
+
     for i, frog in enumerate(game.frogs):
+        if (frog.position.y < -100):
+            game.frogs.pop(i)
+            continue
+
         game.frogs[i].position = pygame.Vector2(frog.position.x, frog.position.y - game.SCROLL_SPEED * delta_time)
         
         if (distance(frog.position, game.player_position) < 375):
