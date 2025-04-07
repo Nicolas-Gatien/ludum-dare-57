@@ -15,8 +15,8 @@
     - [x] Jump Sound Effects
     - [x] Death Sound Effects
 - [x] Add Restart popup
-- [ ] Fix Jumping Bug
 - [ ] Add Difficulty Scaling
+- [ ] Fix Jumping Bug
 - [ ] Add Jump Sprite to Frogs
 - [ ] Add Pixelated Effect to Cave Wall
 - [ ] Add Music

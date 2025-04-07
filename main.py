@@ -190,12 +190,16 @@ while running:
 
         if wall[2][1] < 0:
             coordinate = extend_wall(wall)
-            if (random.random() > 0.95):
+            if (random.random() > 0.95 - (game.score / 50000)):
                 new_frog = spawn_frog(wall, len(wall) - 1, i)
                 if new_frog:
                     game.frogs.append(new_frog)
             game.walls[i].append(coordinate)
             game.walls[i].pop(1)
+
+    game.SCROLL_SPEED *= 1 + (0.005 * delta_time) 
+    game.player_acceleration *= 1 + (0.005 * delta_time) 
+
 
     for i, frog in enumerate(game.frogs):
         if (frog.position.y < -100):
@@ -234,7 +238,7 @@ while running:
     render_right_wall.append((screen.width, screen.height))
 
     if not(game.dead):
-        game.score += 20 * delta_time
+        game.score += 20 * delta_time * (game.SCROLL_SPEED / 300)
 
     screen.fill("black")
 
@@ -252,8 +256,6 @@ while running:
         pygame.draw.rect(screen, "black", background_rect, round(background_rect.height / 2), 16)
         screen.blit(score_surface, ((screen.width / 2) - score_surface.width / 2, (screen.height / 2) - score_surface.height / 2))
         screen.blit(restart_surface, ((screen.width / 2) - restart_surface.width / 2, (screen.height / 2) + restart_surface.height / 2))
-
-
 
     for frog in game.frogs:
         if frog.movement_speed < 0:
@@ -276,6 +278,10 @@ while running:
 
     text_surface = my_font.render(f"{str(round(game.score))}m", False, "white")
     screen.blit(text_surface, ((screen.width / 2) - text_surface.width / 2,0))
+
+    #stats_surface = my_font.render(f"SCROLL SPEED: {game.SCROLL_SPEED}\nPLAYER SPEED: {game.player_acceleration}", False, "red")
+    #screen.blit(stats_surface, (0, 0))
+
 
     pygame.display.flip()
 
