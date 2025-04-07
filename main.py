@@ -74,6 +74,7 @@ frog_sprite = pygame.image.load('frog.png').convert_alpha()
 frog_sprite = pygame.transform.scale(frog_sprite, (48, 48))
 
 jump_sound = pygame.mixer.Sound('jump.wav')
+death_sound = pygame.mixer.Sound('die.wav')
 
 def distance(point_a: pygame.Vector2, point_b: pygame.Vector2):
     return math.sqrt(((point_b.x - point_a.x) ** 2) + ((point_b.y - point_a.y) ** 2))
@@ -118,6 +119,7 @@ def die():
     game.player_speed = -(game.player_speed * 2)
     game.player_current_gravity = -100
     game.player_acceleration = 0
+    death_sound.play()
 
 while running:
     for event in pygame.event.get():

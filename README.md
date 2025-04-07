@@ -11,9 +11,9 @@
 - [x] Make sure level is always possible
 - [x] Add Sine wave cave offset
 - [x] Add Basic Enemy
-- [ ] Add Sound effects
+- [x] Add Sound effects
     - [x] Jump Sound Effects
-    - [ ] Death Sound Effects
+    - [x] Death Sound Effects
 - [ ] Add Music
 - [ ] Add Restart popup
 - [ ] Fix Jumping Bug
